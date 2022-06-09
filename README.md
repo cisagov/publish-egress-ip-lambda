@@ -1,6 +1,6 @@
-# skeleton-aws-lambda-python #
+# publish-egress-ip-lambda #
 
-[![GitHub Build Status](https://github.com/cisagov/skeleton-aws-lambda-python/workflows/build/badge.svg)](https://github.com/cisagov/skeleton-aws-lambda-python/actions)
+[![GitHub Build Status](https://github.com/cisagov/publish-egress-ip-lambda/workflows/build/badge.svg)](https://github.com/cisagov/publish-egress-ip-lambda/actions)
 
 This is a generic skeleton project that can be used to quickly get a
 new [cisagov](https://github.com/cisagov) GitHub
