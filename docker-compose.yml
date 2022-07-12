@@ -4,12 +4,7 @@ version: '3.2'
 services:
   build_deployment_package:
     build: .
-    image: "cisagov/example_lambda"
+    image: "cisagov/publish_egress_ip_lambda"
     entrypoint: ./build/build_artifact.sh
     volumes:
       - .:/var/task/output
-  run_lambda_locally:
-    build: .
-    image: "cisagov/example_lambda"
-    ports:
-      - "9000:8080"
