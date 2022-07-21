@@ -3,7 +3,7 @@
 # See: https://git-scm.com/docs/gitignore
 
 ## Project Specific ##
-lambda_build.zip
+publish_egress_ip_lambda.zip
 
 ## Python ##
 __pycache__
