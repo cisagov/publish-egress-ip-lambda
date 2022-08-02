@@ -122,20 +122,20 @@ def get_ec2_regions(
     return result
 
 
-def update_bucket(bucket_name, filename, bucket_contents):
-    """Update the S3 bucket with the new contents."""
+def update_bucket(bucket_name, object_name, object_contents):
+    """Update an object in a S3 bucket with new contents."""
     s3 = boto3.resource("s3")
 
     # Get the bucket
     bucket = s3.Bucket(bucket_name)
 
     # Get the object within the bucket
-    b_object = bucket.Object(filename)
+    b_object = bucket.Object(object_name)
 
     # Send the bytes contents to the object in the bucket
     # Prevent caching of this object
     b_object.put(
-        Body=bucket_contents.encode("utf-8"),
+        Body=object_contents.encode("utf-8"),
         CacheControl="no-cache",
         ContentEncoding="utf-8",
         ContentType="text/plain",
@@ -283,15 +283,15 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     # The domain to display in the header of each published file
     domain: str = event.get("domain", "example.gov")
 
-    # Update each file in the bucket
+    # Update each object (file) in the bucket
     for config in file_configs:
-        # Initialize bucket contents
-        bucket_contents = file_header
+        # Initialize contents of object to be published
+        object_contents = file_header
         for net in collapse_addresses(config["ip_set"]):
-            bucket_contents += str(net) + "\n"
+            object_contents += str(net) + "\n"
 
         # Fill in header template
-        bucket_contents = bucket_contents.format(
+        object_contents = object_contents.format(
             domain=domain,
             filename=config["filename"],
             timestamp=now,
@@ -300,12 +300,12 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
 
         # Send the contents to the S3 bucket
         logging.info("Writing to bucket: {}/{}".format(bucket_name, config["filename"]))
-        update_bucket(bucket_name, config["filename"], bucket_contents)
+        update_bucket(bucket_name, config["filename"], object_contents)
 
         # Print the contents for the user
         logging.info("")
         logging.info("-" * 40)
-        logging.info(bucket_contents)
+        logging.info(object_contents)
         logging.info("-" * 40)
         logging.info("")
 
