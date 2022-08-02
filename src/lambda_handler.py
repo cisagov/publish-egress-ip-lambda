@@ -14,10 +14,8 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-def create_assumed_aws_client(
-    aws_service: str, role_arn: str, session_name: str
-) -> boto3.client:
-    """Assume the given role and return an AWS client for the given service using that role."""
+def assume_role(role_arn: str, session_name: str) -> Tuple[str, str, str]:
+    """Assume the given role and return a tuple containing the assumed role's credentials."""
     # Create an STS session with current credentials
     sts: boto3.client = boto3.client("sts")
 
@@ -26,11 +24,24 @@ def create_assumed_aws_client(
         RoleArn=role_arn, RoleSessionName=session_name
     )
 
+    return (
+        response["Credentials"]["AccessKeyId"],
+        response["Credentials"]["SecretAccessKey"],
+        response["Credentials"]["SessionToken"],
+    )
+
+
+def create_assumed_aws_client(
+    aws_service: str, role_arn: str, session_name: str
+) -> boto3.client:
+    """Assume the given role and return an AWS client for the given service using that role."""
+    role_credentials = assume_role(role_arn, session_name)
+
     return boto3.client(
         aws_service,
-        aws_access_key_id=response["Credentials"]["AccessKeyId"],
-        aws_secret_access_key=response["Credentials"]["SecretAccessKey"],
-        aws_session_token=response["Credentials"]["SessionToken"],
+        aws_access_key_id=role_credentials[0],
+        aws_secret_access_key=role_credentials[1],
+        aws_session_token=role_credentials[2],
     )
 
 
@@ -38,20 +49,14 @@ def create_assumed_aws_resource(
     aws_service: str, region: str, role_arn: str, session_name: str
 ) -> boto3.resource:
     """Assume the given role and return an AWS resource object for the given service using that role."""
-    # Create an STS session with current credentials
-    sts: boto3.client = boto3.client("sts")
-
-    # Assume the provided role
-    response: Dict[str, Any] = sts.assume_role(
-        RoleArn=role_arn, RoleSessionName=session_name
-    )
+    role_credentials = assume_role(role_arn, session_name)
 
     return boto3.resource(
         aws_service,
         region_name=region,
-        aws_access_key_id=response["Credentials"]["AccessKeyId"],
-        aws_secret_access_key=response["Credentials"]["SecretAccessKey"],
-        aws_session_token=response["Credentials"]["SessionToken"],
+        aws_access_key_id=role_credentials[0],
+        aws_secret_access_key=role_credentials[1],
+        aws_session_token=role_credentials[2],
     )
 
 
