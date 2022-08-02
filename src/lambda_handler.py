@@ -211,10 +211,10 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
         config["app_regex"] = re.compile(config["app_regex"])
         config["ip_set"] = {ip_network(i) for i in config["static_ips"]}
 
-    # Name of the AWS tag whose value represents the application
+    # Name of the AWS resource tag whose value represents the application
     # associated with an IP address
     application_tag_name: str = event.get("application_tag", "Application")
-    # AWS tag name indicating whether an IP address should be published
+    # AWS resource tag name indicating whether an IP address should be published
     publish_egress_tag_name: str = event.get("publish_egress_tag", "Publish Egress")
     # Name of the IAM role to assume that can read the necessary EC2 data
     # in each AWS account. Note that this role must exist in each account.
