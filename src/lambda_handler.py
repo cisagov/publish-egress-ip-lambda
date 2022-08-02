@@ -35,7 +35,7 @@ def create_assumed_aws_client(
     aws_service: str, role_arn: str, session_name: str
 ) -> boto3.client:
     """Assume the given role and return an AWS client for the given service using that role."""
-    role_credentials = assume_role(role_arn, session_name)
+    role_credentials: Tuple[str, str, str] = assume_role(role_arn, session_name)
 
     return boto3.client(
         aws_service,
@@ -49,7 +49,7 @@ def create_assumed_aws_resource(
     aws_service: str, region: str, role_arn: str, session_name: str
 ) -> boto3.resource:
     """Assume the given role and return an AWS resource object for the given service using that role."""
-    role_credentials = assume_role(role_arn, session_name)
+    role_credentials: Tuple[str, str, str] = assume_role(role_arn, session_name)
 
     return boto3.resource(
         aws_service,
@@ -122,7 +122,7 @@ def get_ec2_regions(
     return result
 
 
-def update_bucket(bucket_name, object_name, object_contents):
+def update_bucket(bucket_name: str, object_name: str, object_contents: str) -> None:
     """Update an object in a S3 bucket with new contents."""
     s3 = boto3.resource("s3")
 
