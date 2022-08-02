@@ -60,6 +60,16 @@ def create_assumed_aws_resource(
     )
 
 
+def convert_tags(aws_resource: boto3.resource) -> Dict[str, str]:
+    """Convert resource tags from an AWS dictionary into a Python dictionary."""
+    try:
+        tags: Dict[str, str] = {x["Key"]: x["Value"] for x in aws_resource.tags}
+    except TypeError:
+        # This happens if there are no tags associated with the resource
+        tags = {}
+    return tags
+
+
 def get_ec2_ips(
     ec2: boto3.resource, application_tag_name: str, publish_egress_tag_name: str
 ) -> Iterator[Tuple[str, str]]:
@@ -78,12 +88,10 @@ def get_ec2_ips(
         # If the instance doesn't have a public IP, we can skip it
         if instance.public_ip_address is None:
             continue
-        # Convert tags from an AWS dictionary into a Python dictionary
-        try:
-            tags: Dict[str, str] = {x["Key"]: x["Value"] for x in instance.tags}
-        except TypeError:
-            # This happens if there are no tags associated with the instance
-            tags = {}
+
+        # Convert instance tags from an AWS dictionary into a Python dictionary
+        tags = convert_tags(instance)
+
         # If the publish egress tag doesn't exist or isn't set to True, skip it
         if tags.get(publish_egress_tag_name, str(False)) != str(True):
             continue
@@ -93,12 +101,9 @@ def get_ec2_ips(
         yield (tags.get(application_tag_name, ""), instance.public_ip_address)
 
     for vpc_address in vpc_addresses:
-        # Convert tags from AWS dictionary into a Python dictionary
-        try:
-            eip_tags: Dict[str, str] = {x["Key"]: x["Value"] for x in vpc_address.tags}
-        except TypeError:
-            # This happens if there are no tags associated with the elastic IP
-            eip_tags = {}
+        # Convert elastic IP tags from AWS dictionary into a Python dictionary
+        eip_tags = convert_tags(vpc_address)
+
         # If the publish egress tag doesn't exist or isn't set to True, skip it
         if eip_tags.get(publish_egress_tag_name, str(False)) != str(True):
             continue
