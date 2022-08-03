@@ -237,7 +237,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
             return result
 
         # Initialize the set of static IPs
-        config["ip_set"] = {ip_network(i) for i in config.get("static_ips", "")}
+        config["ip_set"] = {ip_network(i) for i in config.get("static_ips", [])}
 
     # Name of the AWS resource tag whose value represents the application
     # associated with an IP address
