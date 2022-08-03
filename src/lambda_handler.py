@@ -205,16 +205,34 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
 
     file_configs: List[FileConfig] = event.get("file_configs", [])
 
-    # Header template for each file; the following variables are available
-    # within the template:
+    # Header template for each file, comprised of a list of strings.
+    # When the file is published, newline characters are automatically added
+    # between each item in the list.
+    # The following variables are available within the template:
     # {domain} - domain where the published files are located
     # {filename} - name of the published file
     # {timestamp} - timestamp when the file was published
     # {description} - description of the published file
-    file_header: str = event.get(
+    file_header: List[str] = event.get(
         "file_header",
-        "###\n# https://{domain}/{filename}\n# {timestamp}\n# {description}\n###\n",
+        [
+            "###",
+            "# https://{domain}/{filename}",
+            "# {timestamp}",
+            "# {description}",
+            "###",
+        ],
     )
+
+    # Ensure file_header is a list of strings
+    if type(file_header) is not list:
+        try:
+            file_header = [str(file_header)]
+        except Exception:
+            error_msg = "file_header must be a list of strings."
+            logging.error(error_msg)
+            failed_task(result, error_msg)
+            return result
 
     # Verify file_configs data, then initialize application regexes and a
     # set to accumulate IPs for each file
@@ -304,7 +322,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     # Update each object (file) in the bucket
     for config in file_configs:
         # Initialize contents of object to be published
-        object_contents = file_header
+        object_contents = "\n".join(file_header)
         for net in collapse_addresses(config["ip_set"]):
             object_contents += str(net) + "\n"
 
