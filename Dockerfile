@@ -27,10 +27,7 @@ RUN yum update --assumeyes \
   && yum clean all
 
 # Install the Python packages necessary to build a deployment package.
-RUN python3 -m pip install --no-cache-dir \
-  pip \
-  setuptools \
-  wheel \
+RUN python3 -m pip install --no-cache-dir pip setuptools wheel \
   && python3 -m pip install --no-cache-dir pipenv
 
 # Copy in the build files.
