@@ -216,10 +216,28 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
         "###\n# https://{domain}/{filename}\n# {timestamp}\n# {description}\n###\n",
     )
 
-    # Initialize application regexes and a set to accumulate IPs for each file
+    # Verify file_configs data, then initialize application regexes and a
+    # set to accumulate IPs for each file
     for config in file_configs:
-        config["app_regex"] = re.compile(config["app_regex"])
-        config["ip_set"] = {ip_network(i) for i in config["static_ips"]}
+        # Verify that required keys are present
+        for required_key in ["app_regex", "description", "filename"]:
+            if required_key not in config:
+                error_msg = 'Missing required key "%s" in file config: "%s"'
+                logging.error(error_msg, required_key, config)
+                failed_task(result, error_msg % (required_key, config))
+                return result
+
+        # Verify that app_regex is valid and initialize if it is
+        try:
+            config["app_regex"] = re.compile(config["app_regex"])
+        except (TypeError, re.error):
+            error_msg = 'Invalid app_regex "%s" provided in file config: "%s"'
+            logging.error(error_msg, config["app_regex"], config)
+            failed_task(result, error_msg % (config["app_regex"], config))
+            return result
+
+        # Initialize the set of static IPs
+        config["ip_set"] = {ip_network(i) for i in config.get("static_ips", "")}
 
     # Name of the AWS resource tag whose value represents the application
     # associated with an IP address
