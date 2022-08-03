@@ -101,7 +101,7 @@ def get_ec2_ips(
         yield (tags.get(application_tag_name, ""), instance.public_ip_address)
 
     for vpc_address in vpc_addresses:
-        # Convert elastic IP tags from AWS dictionary into a Python dictionary
+        # Convert elastic IP tags from an AWS dictionary into a Python dictionary
         eip_tags = convert_tags(vpc_address)
 
         # If the publish egress tag doesn't exist or isn't set to True, skip it
