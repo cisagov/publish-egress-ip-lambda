@@ -322,7 +322,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     # Update each object (file) in the bucket
     for config in file_configs:
         # Initialize contents of object to be published
-        object_contents = "\n".join(file_header)
+        object_contents = "\n".join(file_header) + "\n"
         for net in collapse_addresses(config["ip_set"]):
             object_contents += str(net) + "\n"
 
