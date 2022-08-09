@@ -225,14 +225,16 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     )
 
     # Ensure file_header is a list of strings
-    if type(file_header) is not list:
-        try:
+    try:
+        if type(file_header) is not list:
             file_header = [str(file_header)]
-        except Exception:
-            error_msg = "file_header must be a list of strings."
-            logging.error(error_msg)
-            failed_task(result, error_msg)
-            return result
+        else:
+            file_header = [str(e) for e in file_header]
+    except Exception:
+        error_msg = "file_header must be a list of strings."
+        logging.error(error_msg)
+        failed_task(result, error_msg)
+        return result
 
     # Verify file_configs data, then initialize application regexes and a
     # set to accumulate IPs for each file
