@@ -1,4 +1,7 @@
 --requirement requirements-test.txt
+# boto3 is not strictly required, but it can be useful for some local
+# development testing activities, so we include it here as a convenience.
+boto3
 ipython
 pipenv
 semver
