@@ -289,7 +289,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
             logging.error(error_msg, account_id)
             failed_task(result, error_msg % account_id)
 
-        logging.info("Examining account: %s" % account_id)
+        logging.info("Examining account: %s", account_id)
 
         # Create an EC2 client with the assumed role
         ec2: boto3.client = create_assumed_aws_client(
@@ -301,11 +301,11 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
         # Get a list of all regions that match our filter
         regions: List[str] = get_ec2_regions(ec2, region_filters)
 
-        logging.info("Gathering public IPs from %d regions" % len(regions))
+        logging.info("Gathering public IPs from %d regions", len(regions))
 
         # Loop through the region list and fetch the public EC2 IPs
         for region in regions:
-            logging.info("Querying region: %s" % region)
+            logging.info("Querying region: %s", region)
 
             # Create an EC2 resource with the assumed role in the specified
             # region
