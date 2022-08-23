@@ -268,7 +268,20 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     # in each AWS account. Note that this role must exist in each account.
     ec2_read_role_name: str = event.get("role_name", "EC2ReadOnly")
 
-    account_ids: List[str] = event.get("account_ids", None)
+    account_ids: List[str] = event.get("account_ids", [])
+
+    # Ensure account_ids is a list of strings
+    try:
+        if type(account_ids) is not list:
+            account_ids = [str(account_ids)]
+        else:
+            account_ids = [str(e) for e in account_ids]
+    except Exception:
+        error_msg = "account_ids must be a list of strings."
+        logging.error(error_msg)
+        failed_task(result, error_msg)
+        return result
+
     for account_id in account_ids:
         # Verify AWS account ID is 12 digits
         if not re.match(r"^\d{12}$", str(account_id)):
