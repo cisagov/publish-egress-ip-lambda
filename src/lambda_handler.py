@@ -284,7 +284,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
 
     for account_id in account_ids:
         # Verify AWS account ID is 12 digits
-        if not re.match(r"^\d{12}$", str(account_id)):
+        if not re.match(r"^\d{12}$", account_id):
             error_msg = 'Account ID "%s" is invalid - it must be 12 digits.'
             logging.error(error_msg, account_id)
             failed_task(result, error_msg % account_id)
