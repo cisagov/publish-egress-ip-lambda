@@ -5,7 +5,7 @@
 This repository contains code to create a Lambda function that can scan a set
 of AWS accounts and publish files (to an S3 bucket) containing the public IP
 addresses of EC2 instances or Elastic IPs that have been properly tagged.
-Refer to the "Lambda inputs" section below, specifically the
+Refer to the [Lambda inputs](#lambda-inputs) section below, specifically the
 `publish_egress_tag`, for more information about how to tag an instance
 or EIP for publication.
 
