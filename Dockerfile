@@ -5,7 +5,7 @@ FROM amazon/aws-lambda-python:$PY_VERSION
 # Declare it a second time so it's brought into this scope.
 ARG PY_VERSION=3.9
 # Get the base output file name from the command line if provided.
-ARG FILE_NAME=publish_egress_ip
+ARG FILE_NAME=lambda_build
 
 # For a list of pre-defined annotation keys and value types see:
 # https://github.com/opencontainers/image-spec/blob/master/annotations.md
