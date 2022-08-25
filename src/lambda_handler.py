@@ -303,6 +303,8 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
             error_msg = 'Account ID "%s" is invalid - it must be 12 digits.'
             logging.error(error_msg, account_id)
             failed_task(result, error_msg % account_id)
+            # Bail out entirely if an invalid account ID is encountered
+            return result
 
         logging.info("Examining account: %s", account_id)
 
