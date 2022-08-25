@@ -173,6 +173,21 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
         "region_filters", []
     )
 
+    try:
+        # The bucket to publish the files to
+        bucket_name: str = event["bucket_name"]
+    except KeyError:
+        error_msg = 'Missing required key "bucket_name" in event.'
+        logging.error(error_msg)
+        failed_task(result, error_msg)
+        return result
+
+    if type(bucket_name) != str:
+        error_msg = '"bucket_name" must be a string.'
+        logging.error(error_msg)
+        failed_task(result, error_msg)
+        return result
+
     # A list of dictionaries that define the files to be created and
     # published.  When an IP is to be published, its associated
     # application is compared to the app_regex field.  If it matches, it
@@ -327,9 +342,6 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
 
     # Use a single timestamp for all files
     now = "{:%a %b %d %H:%M:%S UTC %Y}".format(datetime.utcnow())
-
-    # The bucket to publish the files to
-    bucket_name: str = event["bucket_name"]
 
     # The domain to display in the header of each published file
     domain: str = event.get("domain", "example.gov")
