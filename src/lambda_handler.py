@@ -297,15 +297,20 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
         failed_task(result, error_msg)
         return result
 
-    for account_id in account_ids:
-        # Verify AWS account ID is 12 digits
+    # Verify that each provided AWS account ID is 12 digits
+    invalid_account_ids = []
+    for account_id in account_ids.copy():
         if not re.match(r"^\d{12}$", account_id):
-            error_msg = 'Account ID "%s" is invalid - it must be 12 digits.'
-            logging.error(error_msg, account_id)
-            failed_task(result, error_msg % account_id)
-            # Bail out entirely if an invalid account ID is encountered
-            return result
+            account_ids.remove(account_id)
+            invalid_account_ids.append(account_id)
 
+    if invalid_account_ids:
+        error_msg = 'Invalid account ID(s) provided: "%s" - ID must be 12 digits.'
+        logging.error(error_msg, account_id)
+        failed_task(result, error_msg % ", ".join(invalid_account_ids))
+        return result
+
+    for account_id in account_ids:
         logging.info("Examining account: %s", account_id)
 
         # Create an EC2 client with the assumed role
