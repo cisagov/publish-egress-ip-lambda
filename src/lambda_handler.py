@@ -281,6 +281,20 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
         failed_task(result, " ".join(event_errors))
         return result
 
+    # The account IDs to examine for IP addresses
+    account_ids: List[str] = event["account_ids"]
+
+    # Name of the AWS resource tag whose value represents the application
+    # associated with an IP address
+    application_tag_name: str = event.get("application_tag", "Application")
+
+    # The bucket to publish the files to
+    bucket_name: str = event["bucket_name"]
+
+    # Name of the IAM role to assume that can read the necessary EC2 data
+    # in each AWS account. Note that this role must exist in each account.
+    ec2_read_role_name: str = event.get("role_name", "EC2ReadOnly")
+
     # A list of dictionaries that define the files to be created and
     # published.  When an IP is to be published, its associated
     # application is compared to the app_regex field.  If it matches, it
@@ -313,24 +327,13 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
         ],
     )
 
-    # The bucket to publish the files to
-    bucket_name: str = event["bucket_name"]
+    # AWS resource tag name indicating whether an IP address should be published
+    publish_egress_tag_name: str = event.get("publish_egress_tag", "Publish Egress")
 
     # An AWS-style filter definition to limit the queried regions
     region_filters: List[Dict[str, Union[str, List[str]]]] = event.get(
         "region_filters", []
     )
-
-    # Name of the AWS resource tag whose value represents the application
-    # associated with an IP address
-    application_tag_name: str = event.get("application_tag", "Application")
-    # AWS resource tag name indicating whether an IP address should be published
-    publish_egress_tag_name: str = event.get("publish_egress_tag", "Publish Egress")
-    # Name of the IAM role to assume that can read the necessary EC2 data
-    # in each AWS account. Note that this role must exist in each account.
-    ec2_read_role_name: str = event.get("role_name", "EC2ReadOnly")
-
-    account_ids: List[str] = event["account_ids"]
 
     for account_id in account_ids:
         logging.info("Examining account: %s", account_id)
