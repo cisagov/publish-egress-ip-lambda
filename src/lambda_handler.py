@@ -164,28 +164,121 @@ def task_default(event):
     return result
 
 
+class FileConfig(TypedDict):
+    """Define the type structure of the dictionary in the file_configs variable."""
+
+    app_regex: re.Pattern[str]
+    description: str
+    filename: str
+    # I'd prefer to define ip_set as Set[Union[IPv4Address, IPv6Address]],
+    # but ipaddress.collapse_addresses() uses the type variable "_N" while
+    # ip_network returns Union[IPv4Network, IPv6network] which causes
+    # the mypy pre-commit hook to throw this error:
+    #   Value of type variable "_N" of "collapse_addresses" cannot be
+    #   "Union[IPv4Network, IPv6Network]"
+    # My solution to this problem is to simply define ip_set as Set[Any].
+    # For a similar issue and discussion, see
+    # https://github.com/python/typeshed/issues/2080
+    ip_set: Set[Any]
+    static_ips: List[str]
+
+
+def validate_event_data(
+    event: Dict[str, Any]
+) -> Tuple[Dict[str, Any], bool, List[str]]:
+    """Validate the event data and return a tuple containing the validated event, a boolean result (True if valid, False if invalid), and a list of error message strings."""
+    result = True
+    errors = []
+
+    # Account ID checks
+    if "account_ids" not in event:
+        errors.append('Missing required key "account_ids" in event.')
+    elif event["account_ids"] == []:
+        errors.append('"account_ids" must be a non-empty list.')
+    else:
+        account_ids: List[str] = event["account_ids"]
+        try:
+            # Ensure account_ids is a list of strings
+            if type(account_ids) is not list:
+                account_ids = [str(account_ids)]
+            else:
+                account_ids = [str(e) for e in account_ids]
+
+            # Verify that each provided AWS account ID is 12 digits
+            invalid_account_ids = []
+            for account_id in account_ids.copy():
+                if not re.match(r"^\d{12}$", account_id):
+                    account_ids.remove(account_id)
+                    invalid_account_ids.append(account_id)
+
+            if invalid_account_ids:
+                errors.append(
+                    f'Invalid account ID(s) provided: "{", ".join(invalid_account_ids)}" - ID must be 12 digits.'
+                )
+        except Exception:
+            errors.append("account_ids must be a list of strings.")
+        event["account_ids"] = account_ids
+
+    # Bucket name checks
+    if "bucket_name" not in event:
+        errors.append('Missing required key "bucket_name" in event.')
+    elif type(event["bucket_name"]) != str:
+        errors.append('"bucket_name" must be a string.')
+
+    # File configuration checks
+    file_configs: List[FileConfig] = event["file_configs"]
+    for config in file_configs:
+        # Verify that required keys are present
+        for required_key in ["app_regex", "description", "filename"]:
+            if required_key not in config:
+                errors.append(
+                    f'Missing required key "{required_key}" in file config: "{config}"'
+                )
+
+        # Verify that app_regex is valid and initialize if it is
+        if "app_regex" in config:
+            try:
+                config["app_regex"] = re.compile(config["app_regex"])
+            except (TypeError, re.error):
+                errors.append(
+                    f'Invalid app_regex "{config["app_regex"]}" provided in file config: "{config}"'
+                )
+
+        # Initialize the set of static IPs in this config
+        config["ip_set"] = {ip_network(i) for i in config.get("static_ips", [])}
+    event["file_configs"] = file_configs
+
+    # File header checks
+    if "file_header" in event:
+        file_header: List[str] = event["file_header"]
+        # Ensure file_header is a list of strings
+        try:
+            if type(file_header) is not list:
+                file_header = [str(file_header)]
+            else:
+                file_header = [str(e) for e in file_header]
+        except Exception:
+            errors.append("file_header must be a list of strings.")
+        event["file_header"] = file_header
+
+    if errors:
+        result = False
+
+    return event, result, errors
+
+
 def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]:
     """Publish the egress IP addresses in the given AWS accounts to an S3 bucket."""
     result: Dict[str, Union[Optional[str], bool]] = {"message": None, "success": True}
 
-    # An AWS-style filter definition to limit the queried regions
-    region_filters: List[Dict[str, Union[str, List[str]]]] = event.get(
-        "region_filters", []
-    )
-
-    try:
-        # The bucket to publish the files to
-        bucket_name: str = event["bucket_name"]
-    except KeyError:
-        error_msg = 'Missing required key "bucket_name" in event.'
-        logging.error(error_msg)
-        failed_task(result, error_msg)
-        return result
-
-    if type(bucket_name) != str:
-        error_msg = '"bucket_name" must be a string.'
-        logging.error(error_msg)
-        failed_task(result, error_msg)
+    # Validate all event data before going any further
+    event_valid: bool
+    event_errors: List[str]
+    event, event_valid, event_errors = validate_event_data(event)
+    if not event_valid:
+        for e in event_errors:
+            logging.error(e)
+        failed_task(result, " ".join(event_errors))
         return result
 
     # A list of dictionaries that define the files to be created and
@@ -199,25 +292,6 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     #   - "filename" (string): the name of the file
     #   - "static_ips" (list(string)): a list of CIDR blocks that will always
     #       be included in the published file
-
-    class FileConfig(TypedDict):
-        """Define the type structure of the dictionary in the file_configs variable."""
-
-        app_regex: re.Pattern[str]
-        description: str
-        filename: str
-        # I'd prefer to define ip_set as Set[Union[IPv4Address, IPv6Address]],
-        # but ipaddress.collapse_addresses() uses the type variable "_N" while
-        # ip_network returns Union[IPv4Network, IPv6network] which causes
-        # the mypy pre-commit hook to throw this error:
-        #   Value of type variable "_N" of "collapse_addresses" cannot be
-        #   "Union[IPv4Network, IPv6Network]"
-        # My solution to this problem is to simply define ip_set as Set[Any].
-        # For a similar issue and discussion, see
-        # https://github.com/python/typeshed/issues/2080
-        ip_set: Set[Any]
-        static_ips: List[str]
-
     file_configs: List[FileConfig] = event.get("file_configs", [])
 
     # Header template for each file, comprised of a list of strings.
@@ -239,40 +313,13 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
         ],
     )
 
-    # Ensure file_header is a list of strings
-    try:
-        if type(file_header) is not list:
-            file_header = [str(file_header)]
-        else:
-            file_header = [str(e) for e in file_header]
-    except Exception:
-        error_msg = "file_header must be a list of strings."
-        logging.error(error_msg)
-        failed_task(result, error_msg)
-        return result
+    # The bucket to publish the files to
+    bucket_name: str = event["bucket_name"]
 
-    # Verify file_configs data, then initialize application regexes and a
-    # set to accumulate IPs for each file
-    for config in file_configs:
-        # Verify that required keys are present
-        for required_key in ["app_regex", "description", "filename"]:
-            if required_key not in config:
-                error_msg = 'Missing required key "%s" in file config: "%s"'
-                logging.error(error_msg, required_key, config)
-                failed_task(result, error_msg % (required_key, config))
-                return result
-
-        # Verify that app_regex is valid and initialize if it is
-        try:
-            config["app_regex"] = re.compile(config["app_regex"])
-        except (TypeError, re.error):
-            error_msg = 'Invalid app_regex "%s" provided in file config: "%s"'
-            logging.error(error_msg, config["app_regex"], config)
-            failed_task(result, error_msg % (config["app_regex"], config))
-            return result
-
-        # Initialize the set of static IPs
-        config["ip_set"] = {ip_network(i) for i in config.get("static_ips", [])}
+    # An AWS-style filter definition to limit the queried regions
+    region_filters: List[Dict[str, Union[str, List[str]]]] = event.get(
+        "region_filters", []
+    )
 
     # Name of the AWS resource tag whose value represents the application
     # associated with an IP address
@@ -283,32 +330,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     # in each AWS account. Note that this role must exist in each account.
     ec2_read_role_name: str = event.get("role_name", "EC2ReadOnly")
 
-    account_ids: List[str] = event.get("account_ids", [])
-
-    # Ensure account_ids is a list of strings
-    try:
-        if type(account_ids) is not list:
-            account_ids = [str(account_ids)]
-        else:
-            account_ids = [str(e) for e in account_ids]
-    except Exception:
-        error_msg = "account_ids must be a list of strings."
-        logging.error(error_msg)
-        failed_task(result, error_msg)
-        return result
-
-    # Verify that each provided AWS account ID is 12 digits
-    invalid_account_ids = []
-    for account_id in account_ids.copy():
-        if not re.match(r"^\d{12}$", account_id):
-            account_ids.remove(account_id)
-            invalid_account_ids.append(account_id)
-
-    if invalid_account_ids:
-        error_msg = 'Invalid account ID(s) provided: "%s" - ID must be 12 digits.'
-        logging.error(error_msg, account_id)
-        failed_task(result, error_msg % ", ".join(invalid_account_ids))
-        return result
+    account_ids: List[str] = event["account_ids"]
 
     for account_id in account_ids:
         logging.info("Examining account: %s", account_id)
