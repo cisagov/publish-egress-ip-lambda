@@ -209,9 +209,8 @@ def validate_event_data(
 
             # Verify that each provided AWS account ID is 12 digits
             invalid_account_ids = []
-            for account_id in account_ids.copy():
+            for account_id in account_ids:
                 if not re.match(r"^\d{12}$", account_id):
-                    account_ids.remove(account_id)
                     invalid_account_ids.append(account_id)
 
             if invalid_account_ids:
