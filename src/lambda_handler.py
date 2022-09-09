@@ -202,7 +202,7 @@ def validate_event_data(
         account_ids: List[str] = event["account_ids"]
         try:
             # Ensure account_ids is a list of strings
-            if type(account_ids) is not list:
+            if not isinstance(account_ids, list):
                 account_ids = [str(account_ids)]
             else:
                 account_ids = [str(e) for e in account_ids]
@@ -225,7 +225,7 @@ def validate_event_data(
     # Bucket name checks
     if "bucket_name" not in event:
         errors.append('Missing required key "bucket_name" in event.')
-    elif type(event["bucket_name"]) != str:
+    elif not isinstance(event["bucket_name"], str):
         errors.append('"bucket_name" must be a string.')
 
     # File configuration checks
@@ -256,7 +256,7 @@ def validate_event_data(
         file_header: List[str] = event["file_header"]
         # Ensure file_header is a list of strings
         try:
-            if type(file_header) is not list:
+            if not isinstance(file_header, list):
                 file_header = [str(file_header)]
             else:
                 file_header = [str(e) for e in file_header]
