@@ -229,7 +229,7 @@ def validate_event_data(
         errors.append('"bucket_name" must be a string.')
 
     # File configuration checks
-    file_configs: List[FileConfig] = event["file_configs"]
+    file_configs: List[FileConfig] = event.get("file_configs", [])
     for config in file_configs:
         # Verify that required keys are present
         for required_key in ["app_regex", "description", "filename"]:
@@ -309,7 +309,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     #   - "filename" (string): the name of the file
     #   - "static_ips" (list(string)): a list of CIDR blocks that will always
     #       be included in the published file
-    file_configs: List[FileConfig] = event.get("file_configs", [])
+    file_configs: List[FileConfig] = event["file_configs"]
 
     # Header template for each file, comprised of a list of strings.
     # When the file is published, newline characters are automatically added
