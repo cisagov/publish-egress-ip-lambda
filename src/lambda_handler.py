@@ -196,7 +196,7 @@ def validate_event_data(
     # Account ID checks
     if "account_ids" not in event:
         errors.append('Missing required key "account_ids" in event.')
-    elif event["account_ids"] == []:
+    elif not event["account_ids"]:
         errors.append('"account_ids" must be a non-empty list.')
     else:
         account_ids: List[str] = event["account_ids"]
