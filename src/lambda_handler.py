@@ -114,10 +114,13 @@ def get_ec2_ips(
 
 
 def get_ec2_regions(
-    ec2: boto3.client, filter: Optional[List[Dict[str, Union[str, List[str]]]]] = []
+    ec2: boto3.client, filters: Optional[List[Dict[str, Union[str, List[str]]]]] = None
 ) -> List[str]:
     """Get a filtered list of all the regions with EC2 support."""
-    response = ec2.describe_regions(Filters=filter)
+    if filters is None:
+        filters = []
+
+    response = ec2.describe_regions(Filters=filters)
     result = [x["RegionName"] for x in response["Regions"]]
     return result
 
