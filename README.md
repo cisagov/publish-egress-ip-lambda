@@ -53,11 +53,11 @@ Lambda:
 
 ```json
 {
-    "accounts": [
+    "account_ids": [
         "123456789012",
         "234567890123"
     ],
-    "bucket": "my-egress-ip-bucket",
+    "bucket_name": "my-egress-ip-bucket",
     "domain": "egress.ips.example.gov",
     "file_configs": [
         {
