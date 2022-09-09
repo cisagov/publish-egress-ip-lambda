@@ -5,12 +5,12 @@ FROM amazon/aws-lambda-python:$PY_VERSION
 # Declare it a second time so it's brought into this scope.
 ARG PY_VERSION=3.9
 # Get the base output file name from the command line if provided.
-ARG FILE_NAME=example
+ARG FILE_NAME=lambda_build
 
 # For a list of pre-defined annotation keys and value types see:
 # https://github.com/opencontainers/image-spec/blob/master/annotations.md
 # Note: Additional labels are added by the build workflow.
-LABEL org.opencontainers.image.authors="nicholas.mcdonnell@cisa.dhs.gov"
+LABEL org.opencontainers.image.authors="david.redmin@cisa.dhs.gov"
 LABEL org.opencontainers.image.vendor="Cybersecurity and Infrastructure Security Agency"
 
 # Bring the command line ARGs into the environment so they are available
@@ -27,10 +27,7 @@ RUN yum update --assumeyes \
   && yum clean all
 
 # Install the Python packages necessary to build a deployment package.
-RUN python3 -m pip install --no-cache-dir \
-    pip \
-    setuptools \
-    wheel \
+RUN python3 -m pip install --no-cache-dir pip setuptools wheel \
   && python3 -m pip install --no-cache-dir pipenv
 
 # Copy in the build files.

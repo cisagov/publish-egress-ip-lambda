@@ -1,7 +1,7 @@
 {
   "_meta": {
     "hash": {
-      "sha256": "0917b51635aa96ace981678b22ea817619fd4113a78afe4c2935281268631b7e"
+      "sha256": "35b63359d999438d3e907ecb6ace25d1308a41b2a143969981cb78334ef592ec"
     },
     "pipfile-spec": 6,
     "requires": {
@@ -16,49 +16,61 @@
     ]
   },
   "default": {
-    "contextlib2": {
+    "boto3": {
       "hashes": [
-        "sha256:3fbdb64466afd23abaf6c977627b75b6139a5a3e8ce38405c5b413aed7a0471f",
-        "sha256:ab1e2bfe1d01d968e1b7e8d9023bc51ef3509bba217bb730cee3827e1ee82869"
-      ],
-      "markers": "python_version >= '3.6'",
-      "version": "==21.6.0"
-    },
-    "cowsay": {
-      "hashes": [
-        "sha256:2594b11d6624fff4bf5147b6bdd510ada54a7b5b4e3f2b15ac2a6d3cf99e0bf8",
-        "sha256:a9e1e5f957054010b7faa6406deb5f6aa5cb674498118bbbed0151f92c2dc20e"
+        "sha256:626bbec91ca2423e427636db207a03c854b52d22715c9b34a953ee8260817f6f",
+        "sha256:7e0a5c86059866d7f9e27d6574da9bfb4f8a03c4caf055724145f3cd44785b81"
       ],
       "index": "pypi",
-      "version": "==4.0"
+      "version": "==1.24.27"
     },
-    "docopt": {
+    "botocore": {
       "hashes": [
-        "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"
-      ],
-      "version": "==0.6.2"
-    },
-    "example": {
-      "file": "https://github.com/cisagov/skeleton-python-library/archive/v0.1.0.tar.gz",
-      "hashes": [
-        "sha256:d4ae2105b555cb386daf39e06b05594596e881e67faffc46c69d9e7ce56c8c4c"
-      ],
-      "version": "==0.1.0"
-    },
-    "schema": {
-      "hashes": [
-        "sha256:f06717112c61895cabc4707752b88716e8420a8819d71404501e114f91043197",
-        "sha256:f3ffdeeada09ec34bf40d7d79996d9f7175db93b7a5065de0faa7f41083c1e6c"
-      ],
-      "version": "==0.7.5"
-    },
-    "setuptools": {
-      "hashes": [
-        "sha256:68e45d17c9281ba25dc0104eadd2647172b3472d9e01f911efa57965e8d51a36",
-        "sha256:a43bdedf853c670e5fed28e5623403bad2f73cf02f9a2774e91def6bda8265a7"
+        "sha256:524da451350c41e3136353183e7424c95952124163ea8ec03f57f29597bbcb4b",
+        "sha256:583b85f8a799fb89d1a762db041163b5848b08e79cee06b609bcaaeb69ea1fa6"
       ],
       "markers": "python_version >= '3.7'",
-      "version": "==62.3.2"
+      "version": "==1.27.27"
+    },
+    "jmespath": {
+      "hashes": [
+        "sha256:02e2e4cc71b5bcab88332eebf907519190dd9e6e82107fa7f83b1003a6252980",
+        "sha256:90261b206d6defd58fdd5e85f478bf633a2901798906be2ad389150c5c60edbe"
+      ],
+      "markers": "python_version >= '3.7'",
+      "version": "==1.0.1"
+    },
+    "python-dateutil": {
+      "hashes": [
+        "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86",
+        "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"
+      ],
+      "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+      "version": "==2.8.2"
+    },
+    "s3transfer": {
+      "hashes": [
+        "sha256:06176b74f3a15f61f1b4f25a1fc29a4429040b7647133a463da8fa5bd28d5ecd",
+        "sha256:2ed07d3866f523cc561bf4a00fc5535827981b117dd7876f036b0c1aca42c947"
+      ],
+      "markers": "python_version >= '3.7'",
+      "version": "==0.6.0"
+    },
+    "six": {
+      "hashes": [
+        "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926",
+        "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"
+      ],
+      "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+      "version": "==1.16.0"
+    },
+    "urllib3": {
+      "hashes": [
+        "sha256:8298d6d56d39be0e3bc13c1c97d133f9b45d797169a0e11cdd0e0489d786f7ec",
+        "sha256:879ba4d1e89654d9769ce13121e0f94310ea32e8d2f8cf587b77c08bbcdb30d6"
+      ],
+      "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4'",
+      "version": "==1.26.10"
     }
   },
   "develop": {}
