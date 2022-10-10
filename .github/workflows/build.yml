@@ -19,7 +19,7 @@ jobs:
     steps:
       - id: setup-env
         uses: cisagov/setup-env-github-action@develop
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - id: setup-python
         uses: actions/setup-python@v3
         with:
@@ -108,7 +108,7 @@ jobs:
     steps:
       - id: setup-env
         uses: cisagov/setup-env-github-action@develop
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - id: setup-python
         uses: actions/setup-python@v3
         with:
@@ -149,7 +149,7 @@ jobs:
           - "3.8"
           - "3.9"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
       - name: Get the short SHA for the commit being used
         run: |
           echo "GH_SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
