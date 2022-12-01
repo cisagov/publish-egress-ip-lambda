@@ -23,14 +23,14 @@ Lambda locally.
 
 ## Building a deployment package ##
 
-You can build a deployment zipfile to use when creating a new AWS Lambda
+You can build a deployment zip file to use when creating a new AWS Lambda
 function with the following command:
 
 ```console
 docker compose up build_deployment_package
 ```
 
-This will output the deployment zipfile in the root directory.
+This will output the deployment zip file in the root directory.
 
 ## Running the Lambda locally ##
 
@@ -39,7 +39,7 @@ testing as long as you do not need explicit permissions for other AWS
 services. This can be done with the following command:
 
 ```console
-docker compose up run_lambda_locally
+docker compose up --detach run_lambda_locally
 ```
 
 You can then invoke the Lambda using the following:
@@ -50,6 +50,27 @@ You can then invoke the Lambda using the following:
 
 The `{}` in the command is the invocation event payload to send to the Lambda
 and would be the value given as the `event` argument to the handler.
+
+Once you are finished you can stop the detached container with the following command:
+
+```console
+docker compose down
+```
+
+## How to update Python dependencies ##
+
+The Python dependencies are maintained using a [Pipenv](https://github.com/pypa/pipenv)
+configuration for each supported Python version. Changes to requirements
+should be made to the respective `src/py<Python version>/Pipfile`. More
+information about the `Pipfile` format can be found [here](https://pipenv.pypa.io/en/latest/basics/#example-pipfile-pipfile-lock).
+The accompanying `Pipfile.lock` files contain the specific dependency versions
+that will be installed. These files can be updated like so (using the Python
+3.9 configuration as an example):
+
+```console
+cd src/py3.9
+pipenv lock
+```
 
 ## New Repositories from a Skeleton ##
 
