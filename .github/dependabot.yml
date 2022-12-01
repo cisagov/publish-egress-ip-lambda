@@ -20,7 +20,7 @@ updates:
       - dependency-name: hashicorp/setup-terraform
       - dependency-name: mxschmitt/action-tmate
       # Managed by cisagov/skeleton-aws-lambda-python
-      # - dependency-name: actions/upload-artifact
+      - dependency-name: actions/upload-artifact
 
   - package-ecosystem: "pip"
     directory: "/"
