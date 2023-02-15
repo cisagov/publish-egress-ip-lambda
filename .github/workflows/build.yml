@@ -9,6 +9,7 @@ on:
 
 env:
   CURL_CACHE_DIR: ~/.cache/curl
+  DEFAULT_ARTIFACT_NAME: lambda_build.zip
   PIP_CACHE_DIR: ~/.cache/pip
   PRE_COMMIT_CACHE_DIR: ~/.cache/pre-commit
   RUN_TMATE: ${{ secrets.RUN_TMATE }}
@@ -21,28 +22,24 @@ jobs:
         uses: cisagov/setup-env-github-action@develop
       - uses: actions/checkout@v3
       - id: setup-python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
       # We need the Go version and Go cache location for the actions/cache step,
       # so the Go installation must happen before that.
-      - uses: actions/setup-go@v2
+      - id: setup-go
+        uses: actions/setup-go@v3
         with:
-          go-version: "1.16"
-      - name: Store installed Go version
-        id: go-version
-        run: |
-          echo "::set-output name=version::"\
-          "$(go version | sed 's/^go version go\([0-9.]\+\) .*/\1/')"
+          go-version: "1.19"
       - name: Lookup Go cache directory
         id: go-cache
         run: |
-          echo "::set-output name=dir::$(go env GOCACHE)"
+          echo "dir=$(go env GOCACHE)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v3
         env:
           BASE_CACHE_KEY: "${{ github.job }}-${{ runner.os }}-\
             py${{ steps.setup-python.outputs.python-version }}-\
-            go${{ steps.go-version.outputs.version }}-\
+            go${{ steps.setup-go.outputs.go-version }}-\
             packer${{ steps.setup-env.outputs.packer-version }}-\
             tf${{ steps.setup-env.outputs.terraform-version }}-"
         with:
@@ -78,7 +75,7 @@ jobs:
             ${{ env.CURL_CACHE_DIR }}/"${PACKER_ZIP}"
           sudo mv /usr/local/bin/packer /usr/local/bin/packer-default
           sudo ln -s /opt/packer/packer /usr/local/bin/packer
-      - uses: hashicorp/setup-terraform@v1
+      - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ steps.setup-env.outputs.terraform-version }}
       - name: Install shfmt
@@ -110,7 +107,7 @@ jobs:
         uses: cisagov/setup-env-github-action@develop
       - uses: actions/checkout@v3
       - id: setup-python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
       - uses: actions/cache@v3
@@ -149,7 +146,7 @@ jobs:
           - "3.8"
           - "3.9"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Get the short SHA for the commit being used
         run: |
           echo "GH_SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
@@ -157,7 +154,6 @@ jobs:
         run: |
           docker compose build \
             --build-arg PY_VERSION=${{ matrix.python-version }} \
-            --build-arg FILE_NAME=${{ github.event.repository.name }} \
             build_deployment_package
       - name: Generate the Lambda deployment package
         run: docker compose up build_deployment_package
@@ -167,7 +163,7 @@ jobs:
           name: "${{ github.event.repository.name }}-\
             py${{ matrix.python-version }}-\
             ${{ env.GH_SHORT_SHA }}"
-          path: "${{ github.event.repository.name }}.zip"
+          path: "${{ env.DEFAULT_ARTIFACT_NAME }}"
       - name: Setup tmate debug session
         uses: mxschmitt/action-tmate@v3
         if: env.RUN_TMATE
