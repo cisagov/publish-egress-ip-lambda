@@ -31,6 +31,13 @@ docker compose up build_deployment_package
 
 This will output the deployment zip file in the root directory.
 
+To customize the name of the deployment file, you can override the
+`BUILD_FILE_NAME` environment variable.  For example:
+
+```console
+BUILD_FILE_NAME="publish_egress_ip_lambda.zip" docker compose up build_deployment_package
+```
+
 ## How to update Python dependencies ##
 
 The Python dependencies are maintained using a [Pipenv](https://github.com/pypa/pipenv)
