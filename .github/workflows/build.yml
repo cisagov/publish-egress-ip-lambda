@@ -238,6 +238,8 @@ jobs:
             --build-arg PY_VERSION=${{ matrix.python-version }} \
             build_deployment_package
       - name: Generate the Lambda deployment package
+        env:
+          BUILD_FILE_NAME: ${{ github.event.repository.name }}_build
         run: docker compose up build_deployment_package
       - name: Upload the generated Lambda deployment package as an artifact
         uses: actions/upload-artifact@v4
