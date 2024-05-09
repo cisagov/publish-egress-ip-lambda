@@ -66,7 +66,7 @@ pipenv lock
 | file\_header | The header template for each published file, comprised of a list of strings.  When the file is published, newline characters are automatically added between each item in the list.  The following variables are available within the template: `{domain}` - the domain where the published files are located, `{filename}` - the name of the published file, `{timestamp}` - the timestamp when the file was published, `{description}` - the description of the published file. | `list(string)` | `["###", "# https://{domain}/{filename}", "# {timestamp}", "# {description}", "###"]` | no |
 | publish\_egress\_tag | The name of the AWS tag whose value represents whether the EC2 instance or elastic IP should have its public IP address published. | `string` | `"Publish Egress"` | no |
 | region\_filters | A list of AWS EC2 region filters to use when querying for IP addresses to publish.  If a filter is not specified, the query will be performed in all regions.  An example filter to restrict to US regions looks like this: `[{ "Name" : "endpoint", "Values" : ["*.us-*"] }]`.  For more information, refer to the [AWS EC2 CLI documentation](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-regions.html). | `list(dict({ Name = string, Values = list(string) }))` | `[]` | no |
-| task | The name of Lambda task to perform.  Currently, the only valid value is `"publish"`. | `string` | n/a | yes |
+| task | The name of the Lambda task to perform.  Currently, the only valid value is `"publish"`. | `string` | n/a | yes |
 
 ## Example Lambda input ##
 
