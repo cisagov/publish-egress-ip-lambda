@@ -262,7 +262,7 @@ def validate_event_data(
             else:
                 file_header = [str(e) for e in file_header]
         except Exception:
-            errors.append("file_header must be a list of strings.")
+            errors.append('"file_header" must be a list of strings.')
         event["file_header"] = file_header
 
     if errors:
