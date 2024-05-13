@@ -21,7 +21,7 @@ updates:
       - dependency-name: step-security/harden-runner
       # Managed by cisagov/skeleton-aws-lambda-python
       - dependency-name: actions/upload-artifact
-      # - dependency-name: github/codeql-action
+      - dependency-name: github/codeql-action
     package-ecosystem: github-actions
     schedule:
       interval: weekly
