@@ -94,8 +94,8 @@ def get_ec2_ips(
         # Convert instance tags from an AWS dictionary into a Python dictionary
         tags = convert_tags(instance)
 
-        # If the publish egress tag doesn't exist or isn't set to True, skip it
-        if tags.get(publish_egress_tag_name, str(False)) != str(True):
+        # If the publish egress tag doesn't exist or isn't set to true, skip it
+        if tags.get(publish_egress_tag_name, "false").lower() != "true":
             continue
         # Send back a tuple associating the public IP to an application.
         # If application is unset, return "", so that the IP can be included
@@ -106,8 +106,8 @@ def get_ec2_ips(
         # Convert elastic IP tags from an AWS dictionary into a Python dictionary
         eip_tags = convert_tags(vpc_address)
 
-        # If the publish egress tag doesn't exist or isn't set to True, skip it
-        if eip_tags.get(publish_egress_tag_name, str(False)) != str(True):
+        # If the publish egress tag doesn't exist or isn't set to true, skip it
+        if eip_tags.get(publish_egress_tag_name, "false").lower() != "true":
             continue
         # Send back a tuple associating the public IP to an application.
         # If application is unset, return "", so that the IP can be included
