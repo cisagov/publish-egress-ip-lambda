@@ -260,8 +260,14 @@ def validate_event_data(event: Dict[str, Any]) -> event_validation:
                     f'Invalid app_regex "{config["app_regex"]}" provided in file config: "{config}"'
                 )
 
-        # Initialize the set of static IPs in this config
-        config["ip_set"] = {ip_network(i) for i in config.get("static_ips", [])}
+        try:
+            # Initialize the set of static IPs in this config
+            config["ip_set"] = {ip_network(i) for i in config.get("static_ips", [])}
+        except ValueError as e:
+            errors.append(
+                f'Invalid static IP(s) "{config["static_ips"]}" ({e}) provided in file config: {config}'
+            )
+
     event["file_configs"] = file_configs
 
     # File header checks
