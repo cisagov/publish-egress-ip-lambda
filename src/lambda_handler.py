@@ -16,10 +16,12 @@ default_log_level = "INFO"
 logger = logging.getLogger()
 logger.setLevel(default_log_level)
 
-# Use a named tuple to hold AWS credentials
+# Define some named tuples to make the code more readable
 aws_credentials = namedtuple(
     "aws_credentials", ["access_key_id", "secret_access_key", "session_token"]
 )
+ec2_info = namedtuple("ec2_info", ["application_tag_value", "public_ip"])
+event_validation = namedtuple("event_validation", ["event", "valid", "errors"])
 
 
 def assume_role(role_arn: str, session_name: str) -> aws_credentials:
@@ -76,10 +78,6 @@ def convert_tags(aws_resource: boto3.resource) -> Dict[str, str]:
         # This happens if there are no tags associated with the resource
         tags = {}
     return tags
-
-
-# Use a named tuple to hold EC2 information
-ec2_info = namedtuple("ec2_info", ["application_tag_value", "public_ip"])
 
 
 def get_ec2_ips(
@@ -196,10 +194,6 @@ class FileConfig(TypedDict):
     # https://github.com/python/typeshed/issues/2080
     ip_set: Set[Any]
     static_ips: List[str]
-
-
-# Use a named tuple to store the results of the event validation
-event_validation = namedtuple("event_validation", ["event", "valid", "errors"])
 
 
 def validate_event_data(event: Dict[str, Any]) -> event_validation:
