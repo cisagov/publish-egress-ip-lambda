@@ -1,13 +1,22 @@
 """AWS Lambda handler to publish egress IPs from a provided list of AWS accounts."""
 
 # Standard Python Libraries
-from collections import namedtuple
 from datetime import datetime, timezone
 from ipaddress import collapse_addresses, ip_network
 import logging
 import os
 import re
-from typing import Any, Dict, Iterator, List, Optional, Set, TypedDict, Union
+from typing import (
+    Any,
+    Dict,
+    Iterator,
+    List,
+    NamedTuple,
+    Optional,
+    Set,
+    TypedDict,
+    Union,
+)
 
 # Third-Party Libraries
 import boto3
@@ -16,12 +25,29 @@ default_log_level = "INFO"
 logger = logging.getLogger()
 logger.setLevel(default_log_level)
 
+
 # Define some named tuples to make the code more readable
-aws_credentials = namedtuple(
-    "aws_credentials", ["access_key_id", "secret_access_key", "session_token"]
-)
-ec2_info = namedtuple("ec2_info", ["application_tag_value", "public_ip"])
-event_validation = namedtuple("event_validation", ["event", "valid", "errors"])
+class aws_credentials(NamedTuple):
+    """Named tuple to hold AWS credentials."""
+
+    access_key_id: str
+    secret_access_key: str
+    session_token: str
+
+
+class ec2_info(NamedTuple):
+    """Named tuple to hold EC2 information."""
+
+    application_tag_value: str
+    public_ip: str
+
+
+class event_validation(NamedTuple):
+    """Named tuple to hold event validation information."""
+
+    errors: List[str]
+    event: Dict[str, Any]
+    valid: bool
 
 
 def assume_role(role_arn: str, session_name: str) -> aws_credentials:
@@ -280,7 +306,7 @@ def validate_event_data(event: Dict[str, Any]) -> event_validation:
     if errors:
         result = False
 
-    return event_validation(event, result, errors)
+    return event_validation(errors, event, result)
 
 
 def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]:
