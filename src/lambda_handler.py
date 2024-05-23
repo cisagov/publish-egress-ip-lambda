@@ -199,10 +199,6 @@ def update_bucket(bucket_name: str, object_name: str, object_contents: str) -> N
         ContentType="text/plain",
     )
 
-    # By default, new objects cannot be read by the public, but we want to
-    # allow public reads of this object
-    b_object.Acl().put(ACL="public-read")
-
 
 def failed_task(result: Dict[str, Any], error_msg: str) -> None:
     """Update a given result because of a failure during processing."""
