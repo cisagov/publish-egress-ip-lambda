@@ -430,10 +430,10 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
 
         # Fill in header template
         object_contents = object_contents.format(
+            description=config["description"],
             domain=domain,
             filename=config["filename"],
             timestamp=now,
-            description=config["description"],
         )
 
         # Send the contents to the S3 bucket
