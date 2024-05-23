@@ -50,6 +50,25 @@ class event_validation(NamedTuple):
     valid: bool
 
 
+class FileConfig(TypedDict):
+    """Define the type structure of the dictionary in the file_configs variable."""
+
+    app_regex: re.Pattern[str]
+    description: str
+    filename: str
+    # I'd prefer to define ip_set as Set[Union[IPv4Address, IPv6Address]],
+    # but ipaddress.collapse_addresses() uses the type variable "_N" while
+    # ip_network returns Union[IPv4Network, IPv6network] which causes
+    # the mypy pre-commit hook to throw this error:
+    #   Value of type variable "_N" of "collapse_addresses" cannot be
+    #   "Union[IPv4Network, IPv6Network]"
+    # My solution to this problem is to simply define ip_set as Set[Any].
+    # For a similar issue and discussion, see
+    # https://github.com/python/typeshed/issues/2080
+    ip_set: Set[Any]
+    static_ips: List[str]
+
+
 def assume_role(role_arn: str, session_name: str) -> aws_credentials:
     """Assume the given role and return a named tuple containing the assumed role's credentials."""
     # Create an STS session with current credentials
@@ -201,25 +220,6 @@ def task_default(event):
     failed_task(result, error_msg % task)
 
     return result
-
-
-class FileConfig(TypedDict):
-    """Define the type structure of the dictionary in the file_configs variable."""
-
-    app_regex: re.Pattern[str]
-    description: str
-    filename: str
-    # I'd prefer to define ip_set as Set[Union[IPv4Address, IPv6Address]],
-    # but ipaddress.collapse_addresses() uses the type variable "_N" while
-    # ip_network returns Union[IPv4Network, IPv6network] which causes
-    # the mypy pre-commit hook to throw this error:
-    #   Value of type variable "_N" of "collapse_addresses" cannot be
-    #   "Union[IPv4Network, IPv6Network]"
-    # My solution to this problem is to simply define ip_set as Set[Any].
-    # For a similar issue and discussion, see
-    # https://github.com/python/typeshed/issues/2080
-    ip_set: Set[Any]
-    static_ips: List[str]
 
 
 def validate_event_data(event: Dict[str, Any]) -> event_validation:
