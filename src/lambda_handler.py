@@ -236,19 +236,19 @@ def validate_event_data(event: Dict[str, Any]) -> EventValidation:
                 account_ids = [str(account_ids)]
             else:
                 account_ids = [str(e) for e in account_ids]
-
-            # Verify that each provided AWS account ID is 12 digits
-            invalid_account_ids = []
-            for account_id in account_ids:
-                if not re.match(r"^\d{12}$", account_id):
-                    invalid_account_ids.append(account_id)
-
-            if invalid_account_ids:
-                errors.append(
-                    f'Invalid account ID(s) provided: "{", ".join(invalid_account_ids)}" - ID must be 12 digits.'
-                )
         except Exception:
             errors.append("account_ids must be a list of strings.")
+
+        # Verify that each provided AWS account ID is 12 digits
+        invalid_account_ids = []
+        for account_id in account_ids:
+            if not re.match(r"^\d{12}$", account_id):
+                invalid_account_ids.append(account_id)
+
+        if invalid_account_ids:
+            errors.append(
+                f'Invalid account ID(s) provided: "{", ".join(invalid_account_ids)}" - ID must be 12 digits.'
+            )
         event["account_ids"] = account_ids
 
     # Bucket name checks
