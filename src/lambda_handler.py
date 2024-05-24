@@ -310,13 +310,13 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     result: Dict[str, Union[Optional[str], bool]] = {"message": None, "success": True}
 
     # Validate all event data before going any further
-    EventValidation_info: EventValidation = validate_event_data(event)
-    if not EventValidation_info.valid:
-        for e in EventValidation_info.errors:
+    event_validation: EventValidation = validate_event_data(event)
+    if not event_validation.valid:
+        for e in event_validation.errors:
             logging.error(e)
-        failed_task(result, " ".join(EventValidation_info.errors))
+        failed_task(result, " ".join(event_validation.errors))
         return result
-    validated_event = EventValidation_info.event
+    validated_event = event_validation.event
 
     # The account IDs to examine for IP addresses
     account_ids: List[str] = validated_event["account_ids"]
@@ -403,13 +403,13 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
             )
 
             # Get the public IPs of instances that are tagged to be published
-            for Ec2Info in get_ec2_ips(
+            for ec2_info in get_ec2_ips(
                 ec2, application_tag_name, publish_egress_tag_name
             ):
                 # Loop through all regexes and add IP to set if matched
                 for config in file_configs:
-                    if config["app_regex"].match(Ec2Info.application_tag_value):
-                        config["ip_set"].add(ip_network(Ec2Info.public_ip))
+                    if config["app_regex"].match(ec2_info.application_tag_value):
+                        config["ip_set"].add(ip_network(ec2_info.public_ip))
 
     # Use a single timestamp for all files
     now = "{:%a %b %d %H:%M:%S UTC %Y}".format(datetime.utcnow())
