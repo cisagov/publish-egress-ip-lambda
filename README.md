@@ -2,7 +2,7 @@
 
 [![GitHub Build Status](https://github.com/cisagov/publish-egress-ip-lambda/workflows/build/badge.svg)](https://github.com/cisagov/publish-egress-ip-lambda/actions)
 
-This repository contains code to create a Lambda function that can scan a set
+This repository contains the code for a Lambda function that can scan a set
 of AWS accounts and publish files (to an S3 bucket) containing the public IP
 addresses of EC2 instances or Elastic IPs that have been properly tagged.
 Refer to the [Lambda inputs](#lambda-inputs) section below, specifically the
