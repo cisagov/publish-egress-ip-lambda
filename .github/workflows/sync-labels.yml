@@ -23,6 +23,8 @@ jobs:
       - name: Apply standard cisagov job preamble
         uses: cisagov/action-job-preamble@v1
         with:
+          # Use the cisagov organization variable containing the
+          # organization-wide permissions monitoring configuration.
           permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - id: github-status
         name: Check GitHub status
@@ -43,6 +45,8 @@ jobs:
       - name: Apply standard cisagov job preamble
         uses: cisagov/action-job-preamble@v1
         with:
+          # Use the cisagov organization variable containing the
+          # organization-wide permissions monitoring configuration.
           permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - uses: actions/checkout@v4
       - name: Sync repository labels
