@@ -23,8 +23,19 @@ jobs:
       - name: Apply standard cisagov job preamble
         uses: cisagov/action-job-preamble@v1
         with:
-          # Use the cisagov organization variable containing the
-          # organization-wide permissions monitoring configuration.
+          # Use a variable to specify the permissions monitoring
+          # configuration. By default this will yield the
+          # configuration stored in the cisagov organization-level
+          # variable, but if you want to use a different configuration
+          # then simply:
+          # 1. Create a repository-level variable with the name
+          # ACTIONS_PERMISSIONS_CONFIG.
+          # 2. Set this new variable's value to the configuration you
+          # want to use for this repository.
+          #
+          # Note in particular that changing the permissions
+          # monitoring configuration *does not* require you to modify
+          # this workflow.
           permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - id: github-status
         name: Check GitHub status
@@ -45,8 +56,19 @@ jobs:
       - name: Apply standard cisagov job preamble
         uses: cisagov/action-job-preamble@v1
         with:
-          # Use the cisagov organization variable containing the
-          # organization-wide permissions monitoring configuration.
+          # Use a variable to specify the permissions monitoring
+          # configuration. By default this will yield the
+          # configuration stored in the cisagov organization-level
+          # variable, but if you want to use a different configuration
+          # then simply:
+          # 1. Create a repository-level variable with the name
+          # ACTIONS_PERMISSIONS_CONFIG.
+          # 2. Set this new variable's value to the configuration you
+          # want to use for this repository.
+          #
+          # Note in particular that changing the permissions
+          # monitoring configuration *does not* require you to modify
+          # this workflow.
           permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - uses: actions/checkout@v4
       - name: Sync repository labels
