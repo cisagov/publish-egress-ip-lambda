@@ -29,9 +29,10 @@ jobs:
         with:
           check_github_status: "true"
           # This functionality is poorly implemented and has been
-          # causing a lot of problems due to the MITM implementation
-          # hogging or leaking memory, so we disable it for now.
-          monitor_permissions: "false"
+          # causing problems due to the MITM implementation hogging or
+          # leaking memory.  If this happens to you just uncomment
+          # this line.
+          # monitor_permissions: "false"
           output_workflow_context: "true"
           # Use a variable to specify the permissions monitoring
           # configuration. By default this will yield the
@@ -60,9 +61,10 @@ jobs:
         uses: cisagov/action-job-preamble@v1
         with:
           # This functionality is poorly implemented and has been
-          # causing a lot of problems due to the MITM implementation
-          # hogging or leaking memory, so we disable it for now.
-          monitor_permissions: "false"
+          # causing problems due to the MITM implementation hogging or
+          # leaking memory.  If this happens to you just uncomment
+          # this line.
+          # monitor_permissions: "false"
           # Use a variable to specify the permissions monitoring
           # configuration. By default this will yield the
           # configuration stored in the cisagov organization-level
