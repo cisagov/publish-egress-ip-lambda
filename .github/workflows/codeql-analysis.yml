@@ -7,6 +7,9 @@
 name: CodeQL
 
 on:
+  merge_group:
+    types:
+      - checks_requested
   push:
     # Dependabot triggered push events have read-only access, but uploading code
     # scanning requires write access.
@@ -17,13 +20,21 @@ on:
     branches:
       - develop
   schedule:
-    - cron: '0 14 * * 6'
+    - cron: '0 2 * * 6'
 
 jobs:
   diagnostics:
     name: Run diagnostics
+    # This job does not need any permissions
+    permissions: {}
     runs-on: ubuntu-latest
     steps:
+      # Note that a duplicate of this step must be added at the top of
+      # each job.
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+        with:
+          # Uses the organization variable unless overridden
+          config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       # Note that a duplicate of this step must be added at the top of
       # each job.
       - id: harden-runner
@@ -43,6 +54,8 @@ jobs:
       - diagnostics
     runs-on: ubuntu-latest
     permissions:
+      # actions/checkout needs this to fetch code
+      contents: read
       # required for all workflows
       security-events: write
     strategy:
@@ -51,11 +64,16 @@ jobs:
         # Override automatic language detection by changing the below list
         # Supported options are go, javascript, csharp, python, cpp, and java
         language:
+          - actions
           - python
         # Learn more...
         # https://docs.github.com/en/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#overriding-automatic-language-detection
 
     steps:
+      - uses: GitHubSecurityLab/actions-permissions/monitor@v1
+        with:
+          # Uses the organization variable unless overridden
+          config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - id: harden-runner
         name: Harden the runner
         uses: step-security/harden-runner@v2
