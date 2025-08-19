@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [requires]
-python_version = "3.9"
+python_version = "3.11"
 
 [packages]
 boto3 = "*"
