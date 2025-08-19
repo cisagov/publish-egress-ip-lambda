@@ -10,8 +10,8 @@ output_directory="${LAMBDA_TASK_ROOT}/output"
 artifact_path="$output_directory/$ARTIFACT_FILE_NAME"
 
 # We need the zip utility to create a deployment package archive.
-yum update --assumeyes --quiet
-yum install --assumeyes --quiet zip
+dnf update --assumeyes
+dnf install --assumeyes zip
 
 # Build the deployment package by zipping the libraries and handler. We
 # explicitly exclude the build/ and output/ subdirectories as they are
