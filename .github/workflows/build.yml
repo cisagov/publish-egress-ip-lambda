@@ -217,14 +217,14 @@ jobs:
           python-version: ${{ steps.setup-env.outputs.python-version }}
       - uses: actions/cache@v3
         env:
-          BASE_CACHE_KEY: "${{ github.job }}-${{ runner.os }}-\
-            py${{ steps.setup-python.outputs.python-version }}-"
+          BASE_CACHE_KEY: ${{ github.job }}-${{ runner.os }}-\
+            py${{ steps.setup-python.outputs.python-version }}-
         with:
           path: |
             ${{ env.PIP_CACHE_DIR }}
-          key: "${{ env.BASE_CACHE_KEY }}\
+          key: ${{ env.BASE_CACHE_KEY }}\
             ${{ hashFiles('**/requirements-test.txt') }}-\
-            ${{ hashFiles('**/requirements.txt') }}"
+            ${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ env.BASE_CACHE_KEY }}
       - name: Install dependencies
@@ -271,10 +271,10 @@ jobs:
       - name: Upload the generated Lambda deployment package as an artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ github.event.repository.name }}-\
+          name: ${{ github.event.repository.name }}-\
             py${{ matrix.python-version }}-\
-            ${{ env.GH_SHORT_SHA }}"
-          path: "${{ env.DEFAULT_ARTIFACT_NAME }}"
+            ${{ env.GH_SHORT_SHA }}
+          path: ${{ env.DEFAULT_ARTIFACT_NAME }}
       - name: Setup tmate debug session
         uses: mxschmitt/action-tmate@v3
         if: env.RUN_TMATE
