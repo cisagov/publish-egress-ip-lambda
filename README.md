@@ -46,10 +46,10 @@ should be made to the respective `src/py<Python version>/Pipfile`. More
 information about the `Pipfile` format can be found [here](https://pipenv.pypa.io/en/latest/basics/#example-pipfile-pipfile-lock).
 The accompanying `Pipfile.lock` files contain the specific dependency versions
 that will be installed. These files can be updated like so (using the Python
-3.12 configuration as an example):
+3.13 configuration as an example):
 
 ```console
-cd src/py3.12
+cd src/py3.13
 pipenv lock
 ```
 

@@ -47,6 +47,11 @@ updates:
     schedule:
       interval: weekly
 
+  - directory: /src/py3.13
+    package-ecosystem: pip
+    schedule:
+      interval: weekly
+
   - directory: /
     package-ecosystem: terraform
     schedule:

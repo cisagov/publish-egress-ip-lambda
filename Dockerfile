@@ -1,9 +1,9 @@
-ARG PY_VERSION=3.12
+ARG PY_VERSION=3.13
 
 FROM amazon/aws-lambda-python:$PY_VERSION AS install-stage
 
 # Declare it a second time so it's brought into this scope.
-ARG PY_VERSION=3.12
+ARG PY_VERSION=3.13
 
 # Install the Python packages necessary to install the Lambda dependencies.
 RUN python3 -m pip install --no-cache-dir \
@@ -35,7 +35,7 @@ LABEL org.opencontainers.image.authors="david.redmin@cisa.dhs.gov"
 LABEL org.opencontainers.image.vendor="Cybersecurity and Infrastructure Security Agency"
 
 # Declare it a third time so it's brought into this scope.
-ARG PY_VERSION=3.12
+ARG PY_VERSION=3.13
 
 # This must be present in the image to generate a deployment artifact.
 ENV BUILD_PY_VERSION=$PY_VERSION
