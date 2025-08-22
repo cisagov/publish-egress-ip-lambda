@@ -1,7 +1,7 @@
 ---
 name: release
 
-on:
+on:  # yamllint disable-line rule:truthy
   release:
     types:
       - published
@@ -31,10 +31,9 @@ jobs:
       - name: Upload the generated Lambda deployment package as an artifact
         uses: actions/upload-artifact@v3
         with:
-          name: "${{ github.event.repository.name }}-\
-            py${{ matrix.python-version }}-\
-            ${{ github.ref_name }}"
-          path: "${{ github.event.repository.name }}.zip"
+          name: ${{ github.event.repository.name }}-py${{
+            matrix.python-version }}-${{ github.ref_name }}
+          path: ${{ github.event.repository.name }}.zip
       - name: Setup tmate debug session
         uses: mxschmitt/action-tmate@v3
         if: env.RUN_TMATE
