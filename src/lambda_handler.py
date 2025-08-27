@@ -20,6 +20,7 @@ from typing import (
 
 # Third-Party Libraries
 import boto3
+from botocore.exceptions import ClientError
 
 default_log_level = "INFO"
 logger = logging.getLogger()
@@ -377,12 +378,22 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     for account_id in account_ids:
         logging.info("Examining account: %s", account_id)
 
-        # Create an EC2 client with the assumed role
-        ec2: boto3.client = create_assumed_aws_client(
-            aws_service="ec2",
-            role_arn=f"arn:aws:iam::{account_id}:role/{ec2_read_role_name}",
-            session_name="publish-egress-ip-lambda",
-        )
+        # Attempt to assume the role in the given account; if the role cannot be
+        # assumed, skip this account.
+        try:
+            # Create an EC2 client with the assumed role
+            ec2: boto3.client = create_assumed_aws_client(
+                aws_service="ec2",
+                role_arn=f"arn:aws:iam::{account_id}:role/{ec2_read_role_name}",
+                session_name="publish-egress-ip-lambda",
+            )
+        except ClientError as e:
+            logging.warning(
+                "Failed to assume role in account %s: %s; skipping this account",
+                account_id,
+                e.response["Error"]["Message"],
+            )
+            continue
 
         # Get a list of all regions that match our filter
         regions: List[str] = get_ec2_regions(ec2, region_filters)
