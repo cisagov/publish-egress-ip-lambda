@@ -391,7 +391,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
             logging.warning(
                 "Failed to assume role in account %s: %s; skipping this account",
                 account_id,
-                e.response["Error"]["Message"],
+                str(e),
             )
             continue
 
