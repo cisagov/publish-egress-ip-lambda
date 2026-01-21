@@ -1,6 +1,8 @@
 # publish-egress-ip-lambda #
 
 [![GitHub Build Status](https://github.com/cisagov/publish-egress-ip-lambda/workflows/build/badge.svg)](https://github.com/cisagov/publish-egress-ip-lambda/actions)
+[![License](https://img.shields.io/github/license/cisagov/publish-egress-ip-lambda)](https://spdx.org/licenses/)
+[![CodeQL](https://github.com/cisagov/publish-egress-ip-lambda/workflows/CodeQL/badge.svg)](https://github.com/cisagov/publish-egress-ip-lambda/actions/workflows/codeql-analysis.yml)
 
 This repository contains the code for a Lambda function that can scan a set
 of AWS accounts and publish files (to an S3 bucket) containing the public IP

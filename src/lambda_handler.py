@@ -460,7 +460,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     return result
 
 
-def handler(event, context) -> Dict[str, Optional[str]]:
+def handler(event, context) -> dict[str, str | None]:
     """Process the event and generate a response.
 
     The event should have a task member that is one of the supported tasks.
@@ -471,7 +471,7 @@ def handler(event, context) -> Dict[str, Optional[str]]:
     :return: The result of the action.
     """
     old_log_level = None
-    response: Dict[str, Optional[str]] = {"timestamp": str(datetime.now(timezone.utc))}
+    response: dict[str, str | None] = {"timestamp": str(datetime.now(timezone.utc))}
 
     # Update the logging level if necessary
     new_log_level = os.environ.get("log_level", default_log_level).upper()
