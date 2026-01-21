@@ -1,6 +1,7 @@
 """AWS Lambda handler to publish egress IPs from a provided list of AWS accounts."""
 
 # Standard Python Libraries
+from collections.abc import Iterator
 from datetime import datetime, timezone
 from ipaddress import collapse_addresses, ip_network
 import logging
@@ -8,14 +9,8 @@ import os
 import re
 from typing import (
     Any,
-    Dict,
-    Iterator,
-    List,
     NamedTuple,
-    Optional,
-    Set,
     TypedDict,
-    Union,
 )
 
 # Third-Party Libraries
@@ -46,8 +41,8 @@ class Ec2Info(NamedTuple):
 class EventValidation(NamedTuple):
     """Named tuple to hold event validation information."""
 
-    errors: List[str]
-    event: Dict[str, Any]
+    errors: list[str]
+    event: dict[str, Any]
     valid: bool
 
 
@@ -66,8 +61,8 @@ class FileConfig(TypedDict):
     # My solution to this problem is to simply define ip_set as Set[Any].
     # For a similar issue and discussion, see
     # https://github.com/python/typeshed/issues/2080
-    ip_set: Set[Any]
-    static_ips: List[str]
+    ip_set: set[Any]
+    static_ips: list[str]
 
 
 def assume_role(role_arn: str, session_name: str) -> AwsCredentials:
@@ -76,7 +71,7 @@ def assume_role(role_arn: str, session_name: str) -> AwsCredentials:
     sts: boto3.client = boto3.client("sts")
 
     # Assume the provided role
-    response: Dict[str, Any] = sts.assume_role(
+    response: dict[str, Any] = sts.assume_role(
         RoleArn=role_arn, RoleSessionName=session_name
     )
 
@@ -116,10 +111,10 @@ def create_assumed_aws_resource(
     )
 
 
-def convert_tags(aws_resource: boto3.resource) -> Dict[str, str]:
+def convert_tags(aws_resource: boto3.resource) -> dict[str, str]:
     """Convert resource tags from an AWS dictionary into a Python dictionary."""
     try:
-        tags: Dict[str, str] = {x["Key"]: x["Value"] for x in aws_resource.tags}
+        tags: dict[str, str] = {x["Key"]: x["Value"] for x in aws_resource.tags}
     except TypeError:
         # This happens if there are no tags associated with the resource
         tags = {}
@@ -170,8 +165,8 @@ def get_ec2_ips(
 
 
 def get_ec2_regions(
-    ec2: boto3.client, filters: Optional[List[Dict[str, Union[str, List[str]]]]] = None
-) -> List[str]:
+    ec2: boto3.client, filters: list[dict[str, str | list[str]]] | None = None
+) -> list[str]:
     """Get a filtered list of all the regions with EC2 support."""
     if filters is None:
         filters = []
@@ -201,7 +196,7 @@ def update_bucket(bucket_name: str, object_name: str, object_contents: str) -> N
     )
 
 
-def failed_task(result: Dict[str, Any], error_msg: str) -> None:
+def failed_task(result: dict[str, Any], error_msg: str) -> None:
     """Update a given result because of a failure during processing."""
     result["success"] = False
     result["error_message"] = error_msg
@@ -219,7 +214,7 @@ def task_default(event):
     return result
 
 
-def validate_event_data(event: Dict[str, Any]) -> EventValidation:
+def validate_event_data(event: dict[str, Any]) -> EventValidation:
     """Validate the event data and return a tuple containing the validated event, a boolean result (True if valid, False if invalid), and a list of error message strings."""
     result = True
     errors = []
@@ -230,7 +225,7 @@ def validate_event_data(event: Dict[str, Any]) -> EventValidation:
     elif not event["account_ids"]:
         errors.append('"account_ids" must be a non-empty list.')
     else:
-        account_ids: List[str] = event["account_ids"]
+        account_ids: list[str] = event["account_ids"]
         try:
             # Ensure account_ids is a list of strings
             if not isinstance(account_ids, list):
@@ -259,7 +254,7 @@ def validate_event_data(event: Dict[str, Any]) -> EventValidation:
         errors.append('"bucket_name" must be a string.')
 
     # File configuration checks
-    file_configs: List[FileConfig] = event.get("file_configs", [])
+    file_configs: list[FileConfig] = event.get("file_configs", [])
     for config in file_configs:
         # Verify that required keys are present
         for required_key in ["app_regex", "description", "filename"]:
@@ -289,7 +284,7 @@ def validate_event_data(event: Dict[str, Any]) -> EventValidation:
 
     # File header checks
     if "file_header" in event:
-        file_header: List[str] = event["file_header"]
+        file_header: list[str] = event["file_header"]
         # Ensure file_header is a list of strings
         try:
             if not isinstance(file_header, list):
@@ -306,9 +301,9 @@ def validate_event_data(event: Dict[str, Any]) -> EventValidation:
     return EventValidation(errors, event, result)
 
 
-def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]:
+def task_publish(event: dict[str, Any]) -> dict[str, str | None | bool]:
     """Publish the egress IP addresses in the given AWS accounts to an S3 bucket."""
-    result: Dict[str, Union[Optional[str], bool]] = {"message": None, "success": True}
+    result: dict[str, str | None | bool] = {"message": None, "success": True}
 
     # Validate all event data before going any further
     event_validation: EventValidation = validate_event_data(event)
@@ -320,7 +315,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     validated_event = event_validation.event
 
     # The account IDs to examine for IP addresses
-    account_ids: List[str] = validated_event["account_ids"]
+    account_ids: list[str] = validated_event["account_ids"]
 
     # Name of the AWS resource tag whose value represents the application
     # associated with an IP address
@@ -344,7 +339,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     #   - "filename" (string): the name of the file
     #   - "static_ips" (list(string)): a list of CIDR blocks that will always
     #       be included in the published file
-    file_configs: List[FileConfig] = validated_event["file_configs"]
+    file_configs: list[FileConfig] = validated_event["file_configs"]
 
     # Header template for each file, comprised of a list of strings.
     # When the file is published, newline characters are automatically added
@@ -354,7 +349,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     # {filename} - name of the published file
     # {timestamp} - timestamp when the file was published
     # {description} - description of the published file
-    file_header: List[str] = validated_event.get(
+    file_header: list[str] = validated_event.get(
         "file_header",
         [
             "###",
@@ -371,7 +366,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
     )
 
     # An AWS-style filter definition to limit the queried regions
-    region_filters: List[Dict[str, Union[str, List[str]]]] = validated_event.get(
+    region_filters: list[dict[str, str | list[str]]] = validated_event.get(
         "region_filters", []
     )
 
@@ -396,7 +391,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
             continue
 
         # Get a list of all regions that match our filter
-        regions: List[str] = get_ec2_regions(ec2, region_filters)
+        regions: list[str] = get_ec2_regions(ec2, region_filters)
 
         logging.info("Gathering public IPs from %d regions", len(regions))
 
@@ -489,7 +484,7 @@ def handler(event, context) -> dict[str, str | None]:
     task_name = f"task_{event.get('task')}"
     task = globals().get(task_name, task_default)
 
-    result: Dict[str, Any]
+    result: dict[str, Any]
     if not callable(task):
         logging.error("Provided task is not a callable.")
         logging.error(task)
