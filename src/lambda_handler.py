@@ -423,7 +423,7 @@ def task_publish(event: Dict[str, Any]) -> Dict[str, Union[Optional[str], bool]]
                         config["ip_set"].add(ip_network(ec2_info.public_ip))
 
     # Use a single timestamp for all files
-    now = "{:%a %b %d %H:%M:%S UTC %Y}".format(datetime.utcnow())
+    now = f"{datetime.utcnow():%a %b %d %H:%M:%S UTC %Y}"
 
     # The domain to display in the header of each published file
     domain: str = validated_event.get("domain", "example.gov")
