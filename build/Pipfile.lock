@@ -18,20 +18,20 @@
   "default": {
     "boto3": {
       "hashes": [
-        "sha256:55ec6ef6fc81f46d567a7d1d398d1e5c375d468905d0ccd9e1f767f0c77dbe9b",
-        "sha256:c90d9a170faa0585755fa103a3cd9595e1f53443864e902c180f3d8177589125"
+        "sha256:179601ec2992726a718053bf41e43c223ceba397d31ceab11f64d9c910d9fc3a",
+        "sha256:e6315effaf12b890b99956e6f8e2c3000a3f64e4ee91943cec3895ce9a836afb"
       ],
       "index": "pypi",
-      "markers": "python_version >= '3.9'",
-      "version": "==1.42.92"
+      "markers": "python_version >= '3.10'",
+      "version": "==1.43.6"
     },
     "botocore": {
       "hashes": [
-        "sha256:09ddefddbb1565ceef4b44b4b6e61b1ca5f12701d1494ecc85c1133d1b1e81fb",
-        "sha256:f1193d3057a2d0267353d7ef4e136be37ea432336d097fcb1951fae566ca3a22"
+        "sha256:b1e395b347356860398da42e61c808cf1e34b6fa7180cf2b9d87d986e1a06ba0",
+        "sha256:b6d1fdbc6f65a5fe0b7e947823aa37535d3f39f3ba4d21110fab1f55bbbcc04b"
       ],
-      "markers": "python_version >= '3.9'",
-      "version": "==1.42.92"
+      "markers": "python_version >= '3.10'",
+      "version": "==1.43.6"
     },
     "jmespath": {
       "hashes": [
@@ -51,11 +51,11 @@
     },
     "s3transfer": {
       "hashes": [
-        "sha256:18e25d66fed509e3868dc1572b3f427ff947dd2c56f844a5bf09481ad3f3b2fe",
-        "sha256:8e990f13268025792229cd52fa10cb7163744bf56e719e0b9cb925ab79abf920"
+        "sha256:9edeb6d1c3c2f89d6050348548834ad8289610d886e5bf7b7207728bd43ce33a",
+        "sha256:ce3801712acf4ad3e89fb9990df97b4972e93f4b3b0004d214be5bce12814c20"
       ],
-      "markers": "python_version >= '3.9'",
-      "version": "==0.16.0"
+      "markers": "python_version >= '3.10'",
+      "version": "==0.17.0"
     },
     "six": {
       "hashes": [
@@ -70,7 +70,6 @@
         "sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c",
         "sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897"
       ],
-      "index": "pypi",
       "markers": "python_version >= '3.10'",
       "version": "==2.7.0"
     }
