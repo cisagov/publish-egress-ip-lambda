@@ -7,9 +7,8 @@ FROM docker.io/amazon/aws-lambda-python:3.13 AS install-stage
 
 # Install the Python packages necessary to install the Lambda dependencies.
 RUN python3 -m pip install --no-cache-dir \
-  pip \
-  setuptools \
-  wheel \
+    pip \
+    setuptools \
   # This version of pipenv is the minimum version to allow passing arguments
   # to pip with the --extra-pip-args option.
   && python3 -m pip install --no-cache-dir "pipenv>=2022.9.8"
