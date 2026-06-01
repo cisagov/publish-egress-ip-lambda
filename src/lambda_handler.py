@@ -279,7 +279,7 @@ def validate_event_data(event: dict[str, Any]) -> EventValidation:
             except (TypeError, re.error):
                 errors.append(
                     f'Invalid app_regex "{config["app_regex"]}" provided in file '
-                    f'"config: "{config}"'
+                    f'config: "{config}"'
                 )
 
         try:
