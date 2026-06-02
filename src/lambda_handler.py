@@ -66,7 +66,10 @@ class FileConfig(TypedDict):
 
 
 def assume_role(role_arn: str, session_name: str) -> AwsCredentials:
-    """Assume the given role and return a named tuple containing the assumed role's credentials."""
+    """Assume the role and return credentials.
+
+    Returns: a named tuple containing the assumed role's credentials.
+    """
     # Create an STS session with current credentials
     sts: boto3.client = boto3.client("sts")
 
@@ -85,7 +88,7 @@ def assume_role(role_arn: str, session_name: str) -> AwsCredentials:
 def create_assumed_aws_client(
     aws_service: str, role_arn: str, session_name: str
 ) -> boto3.client:
-    """Assume the given role and return an AWS client for the given service using that role."""
+    """Assume the given role and return an AWS client for the given service."""
     role_credentials: AwsCredentials = assume_role(role_arn, session_name)
 
     return boto3.client(
@@ -99,7 +102,7 @@ def create_assumed_aws_client(
 def create_assumed_aws_resource(
     aws_service: str, region: str, role_arn: str, session_name: str
 ) -> boto3.resource:
-    """Assume the given role and return an AWS resource object for the given service using that role."""
+    """Assume the given role and return an AWS resource object for the given service."""
     role_credentials: AwsCredentials = assume_role(role_arn, session_name)
 
     return boto3.resource(
@@ -215,7 +218,12 @@ def task_default(event):
 
 
 def validate_event_data(event: dict[str, Any]) -> EventValidation:
-    """Validate the event data and return a tuple containing the validated event, a boolean result (True if valid, False if invalid), and a list of error message strings."""
+    """Validate the event data.
+
+    Returns a tuple containing the validated event, a boolean result
+    (True if valid, False if invalid), and a list of error message
+    strings.
+    """
     result = True
     errors = []
 
@@ -243,7 +251,8 @@ def validate_event_data(event: dict[str, Any]) -> EventValidation:
 
         if invalid_account_ids:
             errors.append(
-                f'Invalid account ID(s) provided: "{", ".join(invalid_account_ids)}" - ID must be 12 digits.'
+                f'Invalid account ID(s) provided: "{", ".join(invalid_account_ids)}" '
+                "- ID must be 12 digits."
             )
         event["account_ids"] = account_ids
 
@@ -269,7 +278,8 @@ def validate_event_data(event: dict[str, Any]) -> EventValidation:
                 config["app_regex"] = re.compile(config["app_regex"])
             except (TypeError, re.error):
                 errors.append(
-                    f'Invalid app_regex "{config["app_regex"]}" provided in file config: "{config}"'
+                    f'Invalid app_regex "{config["app_regex"]}" provided in file '
+                    f'config: "{config}"'
                 )
 
         try:
@@ -277,7 +287,8 @@ def validate_event_data(event: dict[str, Any]) -> EventValidation:
             config["ip_set"] = {ip_network(i) for i in config.get("static_ips", [])}
         except ValueError as e:
             errors.append(
-                f'Invalid static IP(s) "{config["static_ips"]}" ({e}) provided in file config: {config}'
+                f'Invalid static IP(s) "{config["static_ips"]}" ({e}) provided '
+                f"in file config: {config}"
             )
 
     event["file_configs"] = file_configs

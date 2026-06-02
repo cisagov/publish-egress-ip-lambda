@@ -57,7 +57,7 @@ pipenv lock
 ## Lambda inputs ##
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | account\_ids | The list of AWS accounts to query for egress IPs to publish. | `list(string)` | n/a | yes |
 | application\_tag | The name of the AWS tag whose value represents the application associated with an IP address. | `string` | `"Application"` | no |
 | bucket\_name | The name of the S3 bucket to publish egress IP address information to. | `string` | n/a | yes |
