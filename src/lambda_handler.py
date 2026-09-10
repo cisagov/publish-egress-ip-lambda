@@ -438,8 +438,12 @@ def task_publish(event: dict[str, Any]) -> dict[str, str | None | bool]:
     for config in file_configs:
         # Initialize contents of object to be published
         object_contents = "\n".join(file_header) + "\n"
-        for net in collapse_addresses(config["ip_set"]):
-            object_contents += str(net) + "\n"
+        for ip_version in (4, 6):
+            networks = (
+                network for network in config["ip_set"] if network.version == ip_version
+            )
+            for net in collapse_addresses(networks):
+                object_contents += str(net) + "\n"
 
         # Fill in header template
         object_contents = object_contents.format(
