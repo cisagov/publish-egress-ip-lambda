@@ -18,20 +18,20 @@
   "default": {
     "boto3": {
       "hashes": [
-        "sha256:5ae342a16c848909cd42d4be404f69d9082e5705460198d4d3327eca5f6cddcb",
-        "sha256:c79994619c8d89e45f6fd0edc5c5b5a70c9358f00423f4c99cb64931f89ecf37"
+        "sha256:be704857751564a5cf69c5bbaadbfa01c22806409815c73563db42fbffe583a2",
+        "sha256:d9cac2eb921ce674970cef1c9ad750f85ee3a846aedcf188d18368fb9eb6da23"
       ],
       "index": "pypi",
       "markers": "python_version >= '3.10'",
-      "version": "==1.43.111"
+      "version": "==1.43.114"
     },
     "botocore": {
       "hashes": [
-        "sha256:8908e4a5fe94a06801a7bf4c451717a38145cc4ffa41aaffa50665940b64b4fa",
-        "sha256:941d3f0e289540da7c49d5e2dc022f992e3638127a02a74a0c91df2661bd98ef"
+        "sha256:9ceda640c868bc15f5399129e8cfdef8cbb4b350e8a99547c9b5f477cfb9619a",
+        "sha256:aa4d9c4e7ef99988b7347e0cd276ba84e1eb1625510557b0e36cd57ecb19bbf2"
       ],
       "markers": "python_version >= '3.10'",
-      "version": "==1.43.113"
+      "version": "==1.43.115"
     },
     "jmespath": {
       "hashes": [
@@ -51,11 +51,11 @@
     },
     "s3transfer": {
       "hashes": [
-        "sha256:ba0309fd86be3c27dbf78cdd813c13c5e1df16e5874b99d2535ebbdfb9892993",
-        "sha256:d8168eccca828cbb2cd573675333f3bddd254313a9c42494b84c76b539e8ba25"
+        "sha256:24eb7535804306355e31c952a90022bf5b2f9d760f9a11062c7493a217c08553",
+        "sha256:8326acc3d056d7f7b8a37110c7d2aea41f67e83f6ae79cd3b5fbcca34c726406"
       ],
       "markers": "python_version >= '3.10'",
-      "version": "==0.19.2"
+      "version": "==0.19.3"
     },
     "six": {
       "hashes": [
